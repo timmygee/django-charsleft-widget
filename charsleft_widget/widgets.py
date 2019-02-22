@@ -18,7 +18,9 @@ except ImportError:
 from charsleft_widget.utils import compatible_staticpath
 
 
-class CharsLeftInput(forms.TextInput): 
+class CharsLeftInput(forms.TextInput):
+    template_name = 'charsleft_widget/input.html'
+    type = 'text'
 
     class Media:
         css={
@@ -26,42 +28,19 @@ class CharsLeftInput(forms.TextInput):
         }
         js=(compatible_staticpath("charsleft-widget/js/charsleft.js"), )
 
-    def render(self, name, value, attrs=None, **kwargs):
-        if value is None:
-            value = ''
+    def __init__(self, attrs=None):
+        """
+        Override init to initialise change_color attribute
+        """
+        if attrs is None:
+            attrs = {}
+        # If change_color present in widget attrs use the value, otherwise it's True by default
+        attrs.setdefault('change_color', True)
+        super().__init__(attrs)
 
-        extra_attrs = {
-            'type': self.input_type,
-            'name': name,
-            'maxlength': self.attrs.get('maxlength')
-        }
-        
-        # Signature for build_attrs changed in 1.11
-        # https://code.djangoproject.com/ticket/28095
-        if VERSION < (1, 11):
-            final_attrs = self.build_attrs(attrs, **extra_attrs)
-        else:
-            final_attrs = self.build_attrs(attrs, extra_attrs=extra_attrs)
-
-        if value != '':
-            final_attrs['value'] = force_str(self._format_value(value))
-
-        maxlength = final_attrs.get('maxlength', False)
-        if not maxlength:
-            return mark_safe(u'<input%s />' % flatatt(final_attrs))
-
-        current = force_str(int(maxlength) - len(value))
-        html = u"""
-            <span class="charsleft charsleft-input">
-            <input %(attrs)s />
-            <span>
-                <span class="count">%(current)s</span> %(char_remain_str)s</span>
-                <span class="maxlength">%(maxlength)s</span>
-            </span>
-        """ % {
-            'attrs': flatatt(final_attrs),
-            'current': current,
-            'char_remain_str': _(u'characters remaining'),
-            'maxlength': int(maxlength),
-        }
-        return mark_safe(html)
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+        context['widget']['type'] = self.input_type
+        maxlength = int(context['widget']['attrs'].get('maxlength', attrs.get('maxlength', 0)))
+        context['current_count'] = force_str(maxlength - len(value))
+        return context

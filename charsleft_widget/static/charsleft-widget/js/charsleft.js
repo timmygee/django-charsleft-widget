@@ -1,34 +1,38 @@
-(function($){  
+(function($){
   $.fn.charsLeft = function(options){
-    var defaults = {  
+    var defaults = {
       'source':'input',
       'dest':'.count',
     }
     var options = $.extend(defaults, options);
-    
-    var calculate = function(source, dest, maxlength){
+
+    var calculate = function(source, dest, maxlength, changeColor){
       var remaining = maxlength - source.val().length;
       dest.html(remaining);
-      /* Over 50%, change colour to orange */
-      p = (100 * remaining) / maxlength;
-      if(p < 25){
-        dest.addClass('orange');
-      }else if(p < 50){
-        dest.addClass('red');
-      }else{
-        dest.removeClass('orange red');
+
+      if (changeColor) {
+        /* Over 50%, change colour to orange */
+        p = (100 * remaining) / maxlength;
+        if(p < 25){
+          dest.addClass('orange');
+        }else if(p < 50){
+          dest.addClass('red');
+        }else{
+          dest.removeClass('orange red');
+        }
       }
     };
-      
+
     this.each(function(i, el) {
       var maxlength = $(this).find('.maxlength').html();
       var dest = $(this).find(options.dest);
       var source = $(this).find(options.source);
+      var changeColor = source.attr('change_color') !== undefined;
       source.keyup(function(){
-        calculate(source, dest, maxlength)
+        calculate(source, dest, maxlength, changeColor)
       });
       source.change(function(){
-        calculate(source, dest, maxlength)
+        calculate(source, dest, maxlength, changeColor)
       });
     });
   };
@@ -38,5 +42,4 @@
       'dest':".count",
     });
   });
-})(django.jQuery);
-
+})((typeof django !== 'undefined' && django.jQuery) || window.jQuery || jQuery);

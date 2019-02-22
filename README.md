@@ -5,9 +5,9 @@ A simple django widget that appends a character count to a text input which is d
 ## Installation
 
 The package can be installed via:
-      
+
     pip install git+https://github.com/timmyomahony/django-charsleft-widget.git
-  
+
 
 ## Usage
 
@@ -20,9 +20,7 @@ class Song(models.Model):
   title = models.CharField(max_length=100)
 ```
 
-then create a custom model form that uses the custom widget class. **Note that it's important
-to include the `maxlength` attribute manually when making use of the widget, as it will not
-be pulled in automatically from your model field.**
+then create a custom model form that uses the custom widget class.
 
 ```python
 from django import forms
@@ -31,7 +29,7 @@ from charsleft_widget.widgets import CharsLeftInput
 from .models import Song
 
 class SongForm(forms.ModelForm):
-  name = forms.CharField(widget=CharsLeftInput(attrs={'maxlength': 100}))
+  name = forms.CharField(widget=CharsLeftInput())
 
   class Meta:
     model = Song
@@ -51,4 +49,11 @@ from .forms import SongForm
 @admin.register(Song)
 class SongAdmin(admin.ModelAdmin):
     form = SongForm
+```
+
+
+You can optionally toggle off the color changing feature by initialising the widget (from the example above) with:
+
+```python
+  name = forms.CharField(widget=CharsLeftInput(attrs={'change_color': False}))
 ```
