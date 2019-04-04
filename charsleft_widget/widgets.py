@@ -42,5 +42,5 @@ class CharsLeftInput(forms.TextInput):
         context = super().get_context(name, value, attrs)
         context['widget']['type'] = self.input_type
         maxlength = int(context['widget']['attrs'].get('maxlength', attrs.get('maxlength', 0)))
-        context['current_count'] = force_str(maxlength - len(value))
+        context['current_count'] = force_str(maxlength - len(value)) if value else '0'
         return context
