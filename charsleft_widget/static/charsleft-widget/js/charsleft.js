@@ -28,6 +28,7 @@
       var dest = $(this).find(options.dest);
       var source = $(this).find(options.source);
       var changeColor = source.attr('change_color') !== undefined;
+      calculate(source, dest, maxlength, changeColor)
       source.keyup(function(){
         calculate(source, dest, maxlength, changeColor)
       });
