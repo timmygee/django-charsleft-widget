@@ -2,7 +2,8 @@
 <span class="charsleft charsleft-input">
     <input type="{{ widget.type }}" name="{{ widget.name }}"{% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}"{% endif %}{% include "django/forms/widgets/attrs.html" %}>
     <span class="charsleft-input-text">
-        <span class="count">{{ current_count }}</span>{% trans 'characters remaining' %}</span>
+        <span class="count">{{ current_count }}</span>
+        <span>{% trans 'characters remaining' %}</span>
         <span class="maxlength">{{ widget.attrs.maxlength }}</span>
     </span>
 </span>
